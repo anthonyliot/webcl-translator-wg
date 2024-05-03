@@ -33,3 +33,19 @@ pre-commit autoupdate
 pre-commit install
 pre-commit run --all-files
 ```
+
+- BUILD
+
+```
+// Desktop
+cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release
+
+// Emscripten Web Environment
+// $ ./externs/emscripten/emcc --generate-config
+// Update the path for ./externs/emscripten/.emscripten
+// $ ./externs/emscripten/bootstrap
+
+cmake -S . -B build/debugwasm -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=./externs/emscripten/cmake/Modules/Platform/Emscripten.cmake
+cmake -S . -B build/releasewasm -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=./externs/emscripten/cmake/Modules/Platform/Emscripten.cmake
+```
