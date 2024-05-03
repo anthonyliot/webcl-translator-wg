@@ -1,0 +1,6 @@
+[submodule "externs/emscripten"]
+	path = externs/emscripten
+	url = git@github.com:anthonyliot/emscripten.git
+[submodule "externs/clwrapper"]
+	path = externs/clwrapper
+	url = git@github.com:anthonyliot/opencl-wrapper.git
