@@ -1,0 +1,12 @@
+{
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "cmakeFormat.args": [
+        "--config-file",
+        "${workspaceRoot}/.cmake-format.json"
+    ],
+    "clang-format.style": "Microsoft",
+    "pre-commit-helper.runOnSave": "all hooks",
+    "pre-commit-helper.config": "${workspaceRoot}/.pre-commit-config.yaml",
+}

@@ -1,0 +1,21 @@
+name: Build
+on: [push]
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate Version
+        id: generate_version
+        run: |
+          VERSION_INCR=$(git rev-list --count HEAD | head -n 1)
+          VERSION_TIME=$(date +'%Y%m%d' | head -n 1)
+          VERSION_SHA=$(git rev-parse HEAD | cut -c 1-8  | head -n 1)
+          VERSION_TAG="v${VERSION_INCR}.${VERSION_TIME}.${VERSION_SHA}"
+          echo "Version: $VERSION_TAG"
+          echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_OUTPUT
