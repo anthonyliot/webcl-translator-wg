@@ -39,7 +39,12 @@ pre-commit run --all-files
 ```
 // Desktop
 cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build build/debug
+ctest --test-dir build/debug
+
 cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release
+cmake --build build/release
+ctest --test-dir build/release
 
 // Emscripten Web Environment
 // $ ./externs/emscripten/emcc --generate-config
@@ -47,5 +52,8 @@ cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release
 // $ ./externs/emscripten/bootstrap
 
 cmake -S . -B build/debugwasm -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=./externs/emscripten/cmake/Modules/Platform/Emscripten.cmake
+cmake --build build/debugwasm
+
 cmake -S . -B build/releasewasm -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=./externs/emscripten/cmake/Modules/Platform/Emscripten.cmake
+cmake --build build/releasewasm
 ```
