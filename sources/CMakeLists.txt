@@ -18,6 +18,8 @@ LIST(LENGTH SAMPLES SAMPLES_LENGTH)
 MATH(EXPR SAMPLES_LENGTH ${SAMPLES_LENGTH}-1)
 MATH(EXPR SAMPLE_INDEX 0)
 
+SET(USE_NATIVE_BINARY OFF)
+
 FOREACH (index RANGE ${SAMPLES_LENGTH})
     LIST(GET SAMPLES ${index} folder)
     SET(CURRENT_SAMPLE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${folder})
@@ -64,45 +66,63 @@ FOREACH (index RANGE ${SAMPLES_LENGTH})
                     DESTINATION ${WEBCLTRANSLATOR_ROOT}/docs/dist)
         ENDIF ()
     ELSE ()
-        IF (EXISTS ${CURRENT_SAMPLE_DIR}/${NAME}.cpp)
-            ENABLE_TESTING()
-            ADD_LIBRARY(${NAME} ${CURRENT_SAMPLE_DIR}/${NAME}.cpp)
+        IF (USE_NATIVE_BINARY)
+            ADD_EXECUTABLE(${NAME} ${CURRENT_SAMPLE_DIR}/${NAME}.cpp)
+            SET_TARGET_PROPERTIES(
+                ${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+                                   ${CMAKE_CURRENT_BINARY_DIR}/${NAME})
+            TARGET_COMPILE_DEFINITIONS(${NAME} PRIVATE -DNATIVE_BINARY)
+            TARGET_INCLUDE_DIRECTORIES(${NAME} PRIVATE ${CURRENT_SAMPLE_DIR}/)
+            TARGET_INCLUDE_DIRECTORIES(${NAME} PRIVATE ${OpenCL_INCLUDE_DIR})
+            TARGET_INCLUDE_DIRECTORIES(
+                ${NAME} PRIVATE ${WEBCLTRANSLATOR_ROOT}/externs/clwrapper/inc)
+            TARGET_INCLUDE_DIRECTORIES(
+                ${NAME}
+                PRIVATE ${WEBCLTRANSLATOR_ROOT}/externs/clwrapper/externs/inc)
+            TARGET_LINK_LIBRARIES(${NAME} PRIVATE cl::wrapper)
             ADD_DEPENDENCIES(${NAME} cl::wrapper)
-
-            # CREATE TEST EXECUTABLE
-            IF (EXISTS ${CURRENT_SAMPLE_DIR}/${NAME}.test.cpp)
-                ADD_EXECUTABLE(${NAME}_test)
-                TARGET_SOURCES(${NAME}_test
-                               PRIVATE ${CURRENT_SAMPLE_DIR}/${NAME}.test.cpp)
-                TARGET_LINK_LIBRARIES(${NAME}_test PRIVATE ${NAME} cl::wrapper
-                                                           gtest_main)
+        ELSE ()
+            IF (EXISTS ${CURRENT_SAMPLE_DIR}/${NAME}.cpp)
+                ENABLE_TESTING()
+                ADD_LIBRARY(${NAME} ${CURRENT_SAMPLE_DIR}/${NAME}.cpp)
+                TARGET_COMPILE_DEFINITIONS(${NAME} PRIVATE -DDISABLE_PRINTF)
                 TARGET_INCLUDE_DIRECTORIES(
-                    ${NAME}_test
-                    PRIVATE ${WEBCLTRANSLATOR_ROOT}/externs/clwrapper)
-                GTEST_DISCOVER_TESTS(${NAME}_test)
-                ADD_TEST(${NAME}_test ${NAME}_test)
-            ENDIF ()
-
-            # CREATE BENCHMARK EXECUTABLE
-            IF (EXISTS ${CURRENT_SAMPLE_DIR}/${NAME}.benchmark.cpp)
-                ADD_EXECUTABLE(${NAME}_benchmark)
-                TARGET_SOURCES(
-                    ${NAME}_benchmark
-                    PRIVATE ${CURRENT_SAMPLE_DIR}/${NAME}.benchmark.cpp)
-                TARGET_LINK_LIBRARIES(
-                    ${NAME}_benchmark PRIVATE ${NAME} cl::wrapper pthread
-                                              benchmark::benchmark_main)
+                    ${NAME}
+                    PRIVATE ${WEBCLTRANSLATOR_ROOT}/externs/clwrapper/inc)
                 TARGET_INCLUDE_DIRECTORIES(
-                    ${NAME}_benchmark
-                    PRIVATE ${WEBCLTRANSLATOR_ROOT}/externs/clwrapper)
-                ADD_TEST(${NAME}_benchmark ${NAME}_benchmark)
+                    ${NAME}
+                    PRIVATE
+                        ${WEBCLTRANSLATOR_ROOT}/externs/clwrapper/externs/inc)
+                ADD_DEPENDENCIES(${NAME} cl::wrapper)
+
+                # CREATE TEST EXECUTABLE
+                IF (EXISTS ${CURRENT_SAMPLE_DIR}/${NAME}.test.cpp)
+                    ADD_EXECUTABLE(${NAME}_test)
+                    TARGET_SOURCES(
+                        ${NAME}_test
+                        PRIVATE ${CURRENT_SAMPLE_DIR}/${NAME}.test.cpp)
+                    TARGET_LINK_LIBRARIES(
+                        ${NAME}_test PRIVATE ${NAME} cl::wrapper gtest_main)
+                    GTEST_DISCOVER_TESTS(${NAME}_test)
+                ENDIF ()
+
+                # CREATE BENCHMARK EXECUTABLE
+                IF (EXISTS ${CURRENT_SAMPLE_DIR}/${NAME}.benchmark.cpp)
+                    ADD_EXECUTABLE(${NAME}_benchmark)
+                    TARGET_SOURCES(
+                        ${NAME}_benchmark
+                        PRIVATE ${CURRENT_SAMPLE_DIR}/${NAME}.benchmark.cpp)
+                    TARGET_LINK_LIBRARIES(
+                        ${NAME}_benchmark PRIVATE ${NAME} cl::wrapper pthread
+                                                  benchmark::benchmark_main)
+                    #ADD_TEST(${NAME}_benchmark ${NAME}_benchmark)
+                ENDIF ()
             ENDIF ()
         ENDIF ()
     ENDIF ()
 ENDFOREACH ()
 
 IF (EMSCRIPTEN)
-
     # Set the current date and time
     STRING(TIMESTAMP BUILD_TIME " %Y-%m-%d %H:%M:%S ")
 

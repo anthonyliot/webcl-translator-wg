@@ -18,7 +18,7 @@ std::vector<int> convolution(void)
     return ret;
 }
 
-#ifdef EMSCRIPTEN
+#if defined(EMSCRIPTEN) || defined(NATIVE_BINARY)
 int main(int argc, char *argv[])
 {
     convolution();
