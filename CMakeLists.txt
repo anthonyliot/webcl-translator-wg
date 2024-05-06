@@ -26,6 +26,8 @@ IF (EMSCRIPTEN)
     # check support for OpenCL 1.2
     FIND_PACKAGE(OpenCL 1.2 EXACT REQUIRED)
 
+    INCLUDE(${CMAKE_CURRENT_LIST_DIR}/cmake/JsonParser.cmake)
+
     IF (OpenCL_FOUND)
         SET(OpenCL_INCLUDE_DIR ${OPENCL_INCLUDE_DIR})
         SET(OpenCL_LIBRARY ${OPENCL_LIBRARY})

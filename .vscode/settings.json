@@ -9,4 +9,7 @@
     "clang-format.style": "Microsoft",
     "pre-commit-helper.runOnSave": "all hooks",
     "pre-commit-helper.config": "${workspaceRoot}/.pre-commit-config.yaml",
+    "files.associations": {
+        "vector": "cpp"
+    },
 }
