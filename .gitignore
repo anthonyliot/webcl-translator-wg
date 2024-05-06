@@ -1,2 +1,9 @@
 **/build/
 **/Testing/
+**/node_modules/
+**/webcl/lib/
+
+**/dist/*.js
+**/dist/*.wasm
+
+.DS_Store

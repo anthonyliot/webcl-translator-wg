@@ -17,3 +17,10 @@ std::vector<int> hello(void)
     std::vector<int> ret{v};
     return ret;
 }
+
+#ifdef EMSCRIPTEN
+int main(int argc, char *argv[])
+{
+    return EXIT_SUCCESS;
+}
+#endif

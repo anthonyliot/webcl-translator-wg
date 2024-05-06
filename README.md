@@ -34,7 +34,7 @@ pre-commit install
 pre-commit run --all-files
 ```
 
-- BUILD
+- BUILD NATIVE
 
 ```
 // Desktop
@@ -52,8 +52,16 @@ ctest --test-dir build/release
 // $ ./externs/emscripten/bootstrap
 
 cmake -S . -B build/debugwasm -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=./externs/emscripten/cmake/Modules/Platform/Emscripten.cmake
-cmake --build build/debugwasm
+cmake --build build/debugwasm --target install
 
 cmake -S . -B build/releasewasm -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=./externs/emscripten/cmake/Modules/Platform/Emscripten.cmake
-cmake --build build/releasewasm
+cmake --build build/releasewasm --target install
 ```
+
+- BUILD WEBCL
+
+NodeJS version 16+ is required.
+
+1. Run `npm install` to download dependencies.
+1. Run `npm run develop` to run the webserver.
+1. Open the WebCL test page at `http://localhost:8000`
