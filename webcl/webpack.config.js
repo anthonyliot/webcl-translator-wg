@@ -12,7 +12,6 @@ module.exports = {
     main: path.resolve(__dirname, "src/index.ts"),
   },
   output: {
-    library: "WebCL",
     libraryTarget: "window",
   },
   resolve: {

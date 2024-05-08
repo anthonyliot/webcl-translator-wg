@@ -1,11 +1,11 @@
 #include "hello.h"
 #include <chrono>
 
-#ifdef __EMSCRIPTEN__
-#include <CL/opencl.h>
-#else
 #include <clext.h>
 #include <clwrapper.h>
+
+#ifdef __EMSCRIPTEN__
+#include <CL/opencl.h>
 #endif
 
 #ifdef DISABLE_PRINTF

@@ -39,8 +39,8 @@
         "codecov": "^3.7.1",
         "eslint": "^6.8.0",
         "eslint-config-prettier": "^6.3.0",
-        "eslint-plugin-webcl": "file:eslint",
         "eslint-plugin-prettier": "^3.1.0",
+        "eslint-plugin-webcl": "file:eslint",
         "fork-ts-checker-webpack-plugin": "^4.1.2",
         "jest": "^29.5.0",
         "jest-environment-jsdom": "^29.5.0",
@@ -55,6 +55,7 @@
         "webpack-merge": "^4.2.2"
     },
     "dependencies": {
+        "@webgpu/types": "^0.1.40",
         "jsdom": "^20.0.0",
         "json-schema": "^0.4.0",
         "json5": "^2.2.3",

@@ -60,6 +60,13 @@ FOREACH (index RANGE ${SAMPLES_LENGTH})
                                    ${CMAKE_CURRENT_BINARY_DIR}/${NAME})
             TARGET_INCLUDE_DIRECTORIES(${NAME} PRIVATE ${CURRENT_SAMPLE_DIR}/)
             TARGET_INCLUDE_DIRECTORIES(${NAME} PRIVATE ${OpenCL_INCLUDE_DIR})
+            TARGET_INCLUDE_DIRECTORIES(
+                ${NAME} PRIVATE ${WEBCLTRANSLATOR_ROOT}/externs/clwrapper/inc)
+            TARGET_INCLUDE_DIRECTORIES(
+                ${NAME}
+                PRIVATE ${WEBCLTRANSLATOR_ROOT}/externs/clwrapper/externs/inc)
+            TARGET_LINK_LIBRARIES(${NAME} PRIVATE cl::wrapper)
+            ADD_DEPENDENCIES(${NAME} cl::wrapper)
             INSTALL(FILES "$<TARGET_FILE_DIR:${NAME}>/${NAME}.js"
                     DESTINATION ${WEBCLTRANSLATOR_ROOT}/docs/dist)
             INSTALL(FILES "$<TARGET_FILE_DIR:${NAME}>/${NAME}.wasm"

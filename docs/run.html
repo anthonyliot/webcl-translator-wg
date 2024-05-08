@@ -55,19 +55,8 @@ Copyright (c) 2024 Anthony Liot. All rights reserved.
         text-align: center;
       }
     </style>
-    <script src="js/webclexception.js"></script>
-    <script src="js/webclmemoryobject.js"></script>
-    <script src="js/webclcommandqueue.js"></script>
-    <script src="js/webclimage.js"></script>
-    <script src="js/webclprogram.js"></script>
-    <script src="js/webclbuffer.js"></script>
-    <script src="js/webclkernel.js"></script>
-    <script src="js/webcldevice.js"></script>
-    <script src="js/webclcontext.js"></script>
-    <script src="js/webclplatform.js"></script>
     <script src="js/webcl.js"></script>
     <script src="js/settings.js"></script>
-    <script src="js/run.js"></script>
     <script src="dist/samples.js" type="text/javascript"></script>
   </head>
   <body>
@@ -95,8 +84,13 @@ Copyright (c) 2024 Anthony Liot. All rights reserved.
           <textarea class="translator" id="output" rows="10"> </textarea>
           <hr />
           <script type="text/javascript">
-            function onWebGPUInitialized() {
-              main();
+            navigator.webcl.initialize((result, data) => {
+              if (result == webcl.SUCCESS) {
+                console.log("Success to initialize webcl module");
+              } else {
+                console.error("Failed to initialize webcl module");
+                return;
+              }
 
               // Canvas
               var cnv = document.createElement("canvas");
@@ -122,9 +116,7 @@ Copyright (c) 2024 Anthony Liot. All rights reserved.
                 SAMPLE = 0;
               }
               includeJS(samples_list[SAMPLE]);
-            }
-
-            initializeWebGPU();
+            });
           </script>
         </section>
         <footer>
