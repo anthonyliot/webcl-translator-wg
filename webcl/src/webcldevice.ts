@@ -5,11 +5,11 @@ import { CLboolean, CLenum } from "./webcltype";
 
 export class WebCLDevice {
     // WebGPU Objects
-    private wgpuInfo: GPUAdapterInfo;
-    private wgpuDevice: GPUDevice;
+    wgpuInfo: GPUAdapterInfo;
+    wgpuDevice: GPUDevice;
 
     // WebCL Objects
-    private wclPlatform: WebCLPlatform;
+    wclPlatform: WebCLPlatform;
 
     constructor(wcl_platform: WebCLPlatform, wgpu_info: GPUAdapterInfo, wgpu_device: GPUDevice) {
         this.wclPlatform = wcl_platform;
@@ -147,7 +147,7 @@ export class WebCLDevice {
             case WebCLConstants.DEVICE_MIN_DATA_TYPE_ALIGN_SIZE:
                 return 0;
             default:
-                throw new WebCLException(WebCLConstants.INVALID_EVENT, "[INVALID_EVENT] WebCLDevice.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
+                throw new WebCLException(WebCLConstants.INVALID_VALUE, "[INVALID_VALUE] WebCLDevice.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
         }
     }
 

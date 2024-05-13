@@ -28,11 +28,22 @@ class WebCLPlatform {
             case WebCLConstants.PLATFORM_EXTENSIONS:
                 return this.getSupportedExtensions().join(" ");
             default:
-                throw new WebCLException(WebCLConstants.INVALID_EVENT, "[INVALID_EVENT] WebCLPlatform.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
+                throw new WebCLException(WebCLConstants.INVALID_VALUE, "[INVALID_VALUE] WebCLPlatform.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
         }
     }
 
-    getDevices(_?: CLenum): Array<WebCLDevice> {
+    getDevices(deviceType?: CLenum): Array<WebCLDevice> {
+        if (this.wclDevice == null) {
+            throw new WebCLException(WebCLConstants.DEVICE_NOT_FOUND, "[DEVICE_NOT_FOUND] WebCLPlatform.getDevices(): Device not found");
+        }
+        else if (deviceType != null && deviceType != WebCLConstants.DEVICE_TYPE_CPU &&
+            deviceType != WebCLConstants.DEVICE_TYPE_GPU &&
+            deviceType != WebCLConstants.DEVICE_TYPE_ACCELERATOR &&
+            deviceType != WebCLConstants.DEVICE_TYPE_DEFAULT &&
+            deviceType != WebCLConstants.DEVICE_TYPE_ALL) {
+            throw new WebCLException(WebCLConstants.INVALID_VALUE, "[INVALID_VALUE] WebCLPlatform.getDevices(): unknown deviceType '" + deviceType + "'");
+        }
+
         return [this.wclDevice]
     }
 

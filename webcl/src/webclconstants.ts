@@ -191,6 +191,7 @@ export enum WebCLConstants {
     UNSIGNED_INT32 = 0x10dc,
     HALF_FLOAT = 0x10dd,
     FLOAT = 0x10de,
+    POINTER = 0x10df, // Non standard from webcl specifications <- Required for getting the details of signature of the kernel
     MEM_OBJECT_BUFFER = 0x10f0,
     MEM_OBJECT_IMAGE2D = 0x10f1,
     MEM_OBJECT_IMAGE3D = 0x10f2,
@@ -201,6 +202,8 @@ export enum WebCLConstants {
     MEM_MAP_COUNT = 0x1104,
     MEM_REFERENCE_COUNT = 0x1105,
     MEM_CONTEXT = 0x1106,
+    MEM_ASSOCIATED_MEMOBJECT = 0x1107,
+    MEM_OFFSET = 0x1108,
     IMAGE_FORMAT = 0x1110,
     IMAGE_ELEMENT_SIZE = 0x1111,
     IMAGE_ROW_PITCH = 0x1112,
@@ -235,6 +238,7 @@ export enum WebCLConstants {
     BUILD_NONE = -1,
     BUILD_ERROR = -2,
     BUILD_IN_PROGRESS = -3,
+    KERNEL_FUNCTION_SIG = 0x1189, // Non standard from webcl specifications <- Required for getting the details of signature of the kernel
     KERNEL_FUNCTION_NAME = 0x1190,
     KERNEL_NUM_ARGS = 0x1191,
     KERNEL_REFERENCE_COUNT = 0x1192,
@@ -682,6 +686,10 @@ export function WebCLConstantStr(value: number): string | undefined {
             return "MEM_REFERENCE_COUNT";
         case WebCLConstants.MEM_CONTEXT:
             return "MEM_CONTEXT";
+        case WebCLConstants.MEM_ASSOCIATED_MEMOBJECT:
+            return "MEM_ASSOCIATED_MEMOBJECT";
+        case WebCLConstants.MEM_OFFSET:
+            return "MEM_OFFSET";
         case WebCLConstants.IMAGE_FORMAT:
             return "IMAGE_FORMAT";
         case WebCLConstants.IMAGE_ELEMENT_SIZE:

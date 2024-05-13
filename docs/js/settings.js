@@ -80,9 +80,7 @@ function loadModule(argv) {
       console.info("Leaks : ");
       var count = 0;
       for (obj in CL.cl_objects) {
-        console.info(
-          "\t" + count++ + " : " + JSON.stringify(CL.cl_objects[obj])
-        );
+        console.info("\t" + count++ + " : ", CL.cl_objects[obj]);
       }
     });
   }
@@ -99,8 +97,16 @@ function loadModule(argv) {
         string += "Leaks : \n";
         var count = 0;
         for (obj in CL.cl_objects) {
-          string +=
-            "\t" + count++ + " : " + JSON.stringify(CL.cl_objects[obj]) + "\n";
+          try {
+            string +=
+              "\t" +
+              count++ +
+              " : " +
+              JSON.stringify(CL.cl_objects[obj]) +
+              "\n";
+          } catch (e) {
+            string += "\t" + count++ + " : " + CL.cl_objects[obj] + "\n";
+          }
         }
         string += "______________________________________________\n";
         string += "\n";

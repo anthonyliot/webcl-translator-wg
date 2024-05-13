@@ -7,14 +7,14 @@ export class WebCLEvent {
     getInfo(name: CLenum): any {
         switch (name) {
             default:
-                throw new WebCLException(WebCLConstants.INVALID_EVENT, "[INVALID_EVENT] WebCLEvent.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
+                throw new WebCLException(WebCLConstants.INVALID_VALUE, "[INVALID_VALUE] WebCLEvent.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
         }
     }
 
     getProfilingInfo(name: CLenum): CLulong {
         switch (name) {
             default:
-                throw new WebCLException(WebCLConstants.INVALID_EVENT, "[INVALID_EVENT] WebCLEvent.getProfilingInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
+                throw new WebCLException(WebCLConstants.INVALID_VALUE, "[INVALID_VALUE] WebCLEvent.getProfilingInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
         }
         return 0;
     }

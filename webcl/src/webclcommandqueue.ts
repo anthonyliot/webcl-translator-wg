@@ -4,9 +4,46 @@ import { WebCLException } from "./webclexception";
 import { WebCLEvent } from "./webclevent";
 import { WebCLImage } from "./webclimage";
 import { WebCLKernel } from "./webclkernel";
-import { CLboolean, CLenum, CLuint, WebCLCallback } from "./webcltype";
+import { CLboolean, CLenum, CLuint, WebCLCallback, WebCLTypedArray } from "./webcltype";
+import { WebCLDevice } from "./webcldevice";
 
 export class WebCLCommandQueue {
+
+    // WebCL Objects
+    wclDevice: WebCLDevice;
+
+    // Object
+    properties: CLenum;
+
+    constructor(wcl_device: WebCLDevice, properties?: CLenum) {
+        this.wclDevice = wcl_device;
+        this.properties = properties
+    }
+
+    createCopyWithSameType(host_ptr: WebCLTypedArray, mappedRange: ArrayBuffer): WebCLTypedArray {
+        let copy;
+        if (host_ptr instanceof Int8Array) {
+            copy = new Int8Array(mappedRange);
+        } else if (host_ptr instanceof Uint8Array) {
+            copy = new Uint8Array(mappedRange);
+        } else if (host_ptr instanceof Int16Array) {
+            copy = new Int16Array(mappedRange);
+        } else if (host_ptr instanceof Uint16Array) {
+            copy = new Uint16Array(mappedRange);
+        } else if (host_ptr instanceof Int32Array) {
+            copy = new Int32Array(mappedRange);
+        } else if (host_ptr instanceof Uint32Array) {
+            copy = new Uint32Array(mappedRange);
+        } else if (host_ptr instanceof Float32Array) {
+            copy = new Float32Array(mappedRange);
+        } else if (host_ptr instanceof Float64Array) {
+            copy = new Float64Array(mappedRange);
+        } else {
+            // Unknown or unsupported type
+            throw new WebCLException(WebCLConstants.INVALID_HOST_PTR, "[INVALID_HOST_PTR] WebCLCommandQueue.createCopyWithSameType()");
+        }
+        return copy;
+    }
 
     enqueueCopyBuffer(srcBuffer: WebCLBuffer, dstBuffer: WebCLBuffer, srcOffset: CLuint, dstOffset: CLuint, numBytes: CLuint, eventWaitList?: Array<WebCLEvent> | null, event?: WebCLEvent | null): void {
         srcBuffer;
@@ -57,7 +94,7 @@ export class WebCLCommandQueue {
         eventWaitList;
         event;
     }
-    enqueueReadBuffer(buffer: WebCLBuffer, blockingRead: CLboolean, bufferOffset: CLuint, numBytes: CLuint, hostPtr: ArrayBufferView, eventWaitList?: Array<WebCLEvent> | null, event?: WebCLEvent | null): void {
+    enqueueReadBuffer(buffer: WebCLBuffer, blockingRead: CLboolean, bufferOffset: CLuint, numBytes: CLuint, hostPtr: WebCLTypedArray, eventWaitList?: Array<WebCLEvent> | null, event?: WebCLEvent | null): void {
         buffer;
         blockingRead;
         bufferOffset;
@@ -65,6 +102,35 @@ export class WebCLCommandQueue {
         hostPtr;
         eventWaitList;
         event;
+
+        // this.wclDevice.wgpuDevice.pushErrorScope("validation");
+        // if (buffer.wgpuReadBuffer == null) {
+        //     buffer.wgpuReadBuffer = this.wclDevice.wgpuDevice.createBuffer({
+        //         size: numBytes + bufferOffset,
+        //         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        //         mappedAtCreation: blockingRead,
+        //     });
+        // }
+
+        // // Map the buffer for reading
+        // const mappedRange = buffer.wgpuReadBuffer.getMappedRange();
+        // // Create a TypedArray view of the mapped range
+        // const mappedArray = this.createCopyWithSameType(hostPtr, mappedRange);
+        // // Copy the data from the mapped buffer to the host pointer
+        // hostPtr.set(mappedArray);
+
+        // // Unmap the buffer
+        // buffer.wgpuReadBuffer.unmap();
+
+        // this.wclDevice.wgpuDevice.popErrorScope().then((error) => {
+        //     if (error) {
+        //         // There was an error creating the sampler, so discard it.
+        //         console.error(
+        //             `An error occured while creating inputBuffer: ${error.message}`
+        //         );
+        //     }
+        // });
+
     }
     enqueueReadBufferRect(buffer: WebCLBuffer, blockingRead: CLboolean, bufferOrigin: Array<CLuint>, hostOrigin: Array<CLuint>, region: Array<CLuint>, bufferRowPitch: CLuint, bufferSlicePitch: CLuint, hostRowPitch: CLuint, hostSlicePitch: CLuint, hostPtr: ArrayBufferView, eventWaitList?: Array<WebCLEvent> | null, event?: WebCLEvent | null): void {
         buffer;
@@ -90,7 +156,7 @@ export class WebCLCommandQueue {
         eventWaitList;
         event;
     }
-    enqueueWriteBuffer(buffer: WebCLBuffer, blockingWrite: CLboolean, bufferOffset: CLuint, numBytes: CLuint, hostPtr: ArrayBufferView, eventWaitList?: Array<WebCLEvent> | null, event?: WebCLEvent | null): void {
+    enqueueWriteBuffer(buffer: WebCLBuffer, blockingWrite: CLboolean, bufferOffset: CLuint, numBytes: CLuint, hostPtr: WebCLTypedArray, eventWaitList?: Array<WebCLEvent> | null, event?: WebCLEvent | null): void {
         buffer;
         blockingWrite;
         bufferOffset;
@@ -98,6 +164,29 @@ export class WebCLCommandQueue {
         hostPtr;
         eventWaitList;
         event;
+
+        this.wclDevice.wgpuDevice.pushErrorScope("validation");
+        if (buffer.wgpuWriteBuffer == null) {
+            buffer.wgpuWriteBuffer = this.wclDevice.wgpuDevice.createBuffer({
+                size: numBytes + bufferOffset,
+                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+                mappedAtCreation: blockingWrite,
+            });
+        }
+        // Get a mapped range of the buffer
+        const mappedRange = buffer.wgpuWriteBuffer.getMappedRange();
+        // Create a Float32Array view of the mapped range
+        const mappedArray = this.createCopyWithSameType(hostPtr, mappedRange);
+        // Copy the floatArray data into the mapped array
+        mappedArray.set(hostPtr);
+        // Unmap the buffer
+        buffer.wgpuWriteBuffer.unmap();
+        this.wclDevice.wgpuDevice.popErrorScope().then((error) => {
+            if (error) {
+                // There was an error creating the sampler, so discard it.
+                console.error("[ERROR] WebCLCommandQueue.enqueueWriteBuffer(): " + error.message);
+            }
+        });
     }
     enqueueWriteBufferRect(buffer: WebCLBuffer, blockingWrite: CLboolean, bufferOrigin: Array<CLuint>, hostOrigin: Array<CLuint>, region: Array<CLuint>, bufferRowPitch: CLuint, bufferSlicePitch: CLuint, hostRowPitch: CLuint, hostSlicePitch: CLuint, hostPtr: ArrayBufferView, eventWaitList?: Array<WebCLEvent> | null, event?: WebCLEvent | null): void {
         buffer;
@@ -150,7 +239,7 @@ export class WebCLCommandQueue {
     getInfo(name: CLenum): any {
         switch (name) {
             default:
-                throw new WebCLException(WebCLConstants.INVALID_EVENT, "[INVALID_EVENT] WebCLCommandQueue.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
+                throw new WebCLException(WebCLConstants.INVALID_VALUE, "[INVALID_VALUE] WebCLCommandQueue.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
         }
     }
     release(): void {

@@ -61,7 +61,7 @@ export const WebCL = {
         return [];
     },
     createContext(_: WebCLPlatform | WebCLDevice | WebCLDevice[] | CLenum, __?: CLenum): WebCLContext {
-        return new WebCLContext(platform);
+        return new WebCLContext(platform, platform.getDevices()[0]);
     },
     getSupportedExtensions(): string[] | null {
         if (platform != null) {

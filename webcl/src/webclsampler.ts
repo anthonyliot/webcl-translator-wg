@@ -6,7 +6,7 @@ export class WebCLSampler {
     getInfo(name: CLenum): any {
         switch (name) {
             default:
-                throw new WebCLException(WebCLConstants.INVALID_EVENT, "[INVALID_EVENT] WebCLSampler.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
+                throw new WebCLException(WebCLConstants.INVALID_VALUE, "[INVALID_VALUE] WebCLSampler.getInfo(): unknown parameter '" + WebCLConstantStr(name) + "'");
         }
     }
 

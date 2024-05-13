@@ -34,6 +34,16 @@ const char *KernelSource = "\n"
                            "       output[i] = input[i] * input[i];                                \n"
                            "   }                                                                   \n"
                            "}                                                                      \n"
+                           "__kernel void cubic(                                                   \n"
+                           "   __global float* input,                                              \n"
+                           "   __global float* output,                                             \n"
+                           "   const unsigned int count)                                           \n"
+                           "{                                                                      \n"
+                           "   int i = get_global_id(0);                                           \n"
+                           "   if(i < count) {                                                     \n"
+                           "       output[i] = input[i] * input[i] * input[i];                     \n"
+                           "   }                                                                   \n"
+                           "}                                                                      \n"
                            "\n";
 
 void check_cl_error(cl_int err_num, char *msg)
@@ -141,23 +151,25 @@ int main(int argc, char *argv[])
     for (int i = 0; i < DATA_SIZE; i++)
         expected[i] = (i + 1.0f) * (i + 1.0f);
 
+    // ----------------------------------------------------------------
+
     std::vector<float> res;
     res = hello_cpu(DATA_SIZE);
-
-    const std::vector<float> ret = hello_cpu(DATA_SIZE);
     int correct = 0;
     for (int i = 0; i < DATA_SIZE; i++)
     {
-        if (ret[i] == expected[i] && ret[i] != 0)
+        if (res[i] == expected[i] && res[i] != 0)
             correct++;
     }
     PRINTF("CPU Computed '%d/%d' correct values!\n", correct, DATA_SIZE);
+
+    // ----------------------------------------------------------------
 
     res = hello_gpu(DATA_SIZE);
     correct = 0;
     for (int i = 0; i < DATA_SIZE; i++)
     {
-        if (ret[i] == expected[i] && ret[i] != 0)
+        if (res[i] == expected[i] && res[i] != 0)
             correct++;
     }
     PRINTF("GPU Computed '%d/%d' correct values!\n", correct, DATA_SIZE);
